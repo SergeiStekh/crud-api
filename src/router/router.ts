@@ -14,7 +14,7 @@ const Router: RouterType = class {
   }
 
   makeRequest(req: http.IncomingMessage, res: http.ServerResponse) {
-    const { method, url } = req;
+    const { method, url} = req;
     const route = this.getRoute(method, url);
     if (route) {
       route.handleRoute(req, res);
