@@ -14,9 +14,9 @@ const userModel = {
   getUsers: () => {
     return usersForUserModal;
   },
-  getUserByUserId: async (id: string) => {
+  getUserByUserId: (id: string) => {
     const user = usersForUserModal.find(user => user.id == id);
-    return await user;
+    return user;
   },
   createUser: async (userData: UserType) => {
     const user = {

@@ -46,9 +46,8 @@ const controller = {
   getSingleUser: async (req: http.IncomingMessage, res: http.ServerResponse) => {
     const { url } = req;
     const userId = getIdFromUrl(url);
-    console.log(userId)
     if (userId) {
-      const singleUser = await userModel.getUserByUserId(userId);
+      const singleUser = userModel.getUserByUserId(userId);
       if (singleUser) {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(singleUser));

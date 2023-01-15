@@ -16,10 +16,11 @@ const Router: RouterType = class {
   makeRequest(req: http.IncomingMessage, res: http.ServerResponse) {
     const { method, url} = req;
     const route = this.getRoute(method, url);
-    if (route) {
+    if (route.handleRoute) {
       route.handleRoute(req, res);
     } else {
-      res.end(JSON.stringify({ 'message': '500 Internal Server Error' }));
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ 'message': `404 - no such route with url ${route.url}` }));
     }
   }
 
@@ -27,11 +28,18 @@ const Router: RouterType = class {
     const routeId = this.getRouteId(url);
     const route = this.routes.filter(route => {
       if (routeId && route.url.includes(':')) {
-        route.url = this.getSingleRoute(route.url, url);
+        return route.method === method && this.getSingleRoute(route.url, url) === url;
+      } else {
+        return route.method === method && route.url === url;
       }
-      return route.method === method && route.url === url;
+      
     })[0];
-    return route ? route : null;
+    const undefinedRoute = {
+      url,
+      method,
+      handleRoute: null
+    }
+    return route ? route : undefinedRoute;
   }
 
   getRouteId(route: string | string[] | undefined) {
