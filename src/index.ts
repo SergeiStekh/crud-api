@@ -1,6 +1,5 @@
-function app() {
-  const tests = "tests"
-  return tests + "2"
-}
+import server from "./server/server";
 
-export default app;
+server.startServer();
+
+export default {}

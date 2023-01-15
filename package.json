@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Rs school task",
   "scripts": {
-    "build": "webpack && node .build/index.js",
+    "build": "webpack",
     "dev": "nodemon ./src/index.ts",
     "dev:prod": "nodemon build/index.js",
     "test": "jest",

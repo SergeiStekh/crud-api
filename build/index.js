@@ -16,7 +16,7 @@
   \**********************/
 /***/ ((__unused_webpack_module, exports) => {
 
-eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nfunction app() {\n    console.log('test');\n    var tests = \"tests\";\n    return tests + \"2\";\n}\nexports[\"default\"] = app;\n\n\n//# sourceURL=webpack://simple-crud-api/./src/index.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nfunction app() {\n    var tests = \"tests\";\n    return tests + \"2\";\n}\nexports[\"default\"] = app;\n\n\n//# sourceURL=webpack://simple-crud-api/./src/index.ts?");
 
 /***/ })
 
