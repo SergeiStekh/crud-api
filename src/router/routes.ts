@@ -17,6 +17,21 @@ const routes: RoutesInterface[] = [
     url: '/users/:id/',
     method: 'GET',
     handleRoute: controller.getSingleUser
+  },
+  {
+    url: '/users/',
+    method: 'POST',
+    handleRoute: controller.addUser
+  },
+  {
+    url: '/users/:id',
+    method: 'PUT',
+    handleRoute: controller.editUser
+  },
+  {
+    url: '/users/:id',
+    method: 'DELETE',
+    handleRoute: controller.deleteUser
   }
 ]
 

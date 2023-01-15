@@ -13,7 +13,7 @@ const Router: RouterType = class {
     this.routes = routes;
   }
 
-  makeRequest(req: any, res: any) {
+  makeRequest(req: http.IncomingMessage, res: http.ServerResponse) {
     const { method, url } = req;
     const route = this.getRoute(method, url);
     if (route) {
@@ -41,7 +41,6 @@ const Router: RouterType = class {
     const routeUrl = url.parse(route);
     const path = routeUrl.pathname;
     const id = path?.split('/').slice(1)[1];
-    console.log(id)
     return id || '';
   }
 
