@@ -21,6 +21,8 @@ const controller = {
       if (username && age && hobbies) {
         const user = await userModel.createUser({ id: '', username, age, hobbies });
         writeCreated(res, user);
+      } else {
+        writeServerError(res, 'Please provide username, age and hobbies');
       }
     } catch(error) {
       writeServerError(res, error);

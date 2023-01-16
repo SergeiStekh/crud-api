@@ -8,7 +8,7 @@ function writeNotFound(res: http.ServerResponse, userId: string | null) {
 
 function writeServerError(res: http.ServerResponse, error: any) {
   res.writeHead(500, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({ message: error.message }));
+  res.end(JSON.stringify({ message: typeof error === 'string' ? error : error.message }));
 }
 
 function writeCreated(res: http.ServerResponse, user: UserType) {

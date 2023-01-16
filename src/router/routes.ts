@@ -14,7 +14,12 @@ const routes: RoutesInterface[] = [
     handleRoute: controller.getUsers
   },
   {
-    url: '/users/:id/',
+    url: '/users',
+    method: 'GET',
+    handleRoute: controller.getUsers
+  },
+  {
+    url: '/users/:id',
     method: 'GET',
     handleRoute: controller.getSingleUser
   },
@@ -24,12 +29,27 @@ const routes: RoutesInterface[] = [
     handleRoute: controller.addUser
   },
   {
+    url: '/users',
+    method: 'POST',
+    handleRoute: controller.addUser
+  },
+  {
     url: '/users/:id',
     method: 'PUT',
     handleRoute: controller.editUser
   },
   {
+    url: '/users/:id/',
+    method: 'PUT',
+    handleRoute: controller.editUser
+  },
+  {
     url: '/users/:id',
+    method: 'DELETE',
+    handleRoute: controller.deleteUser
+  },
+  {
+    url: '/users/:id/',
     method: 'DELETE',
     handleRoute: controller.deleteUser
   }
