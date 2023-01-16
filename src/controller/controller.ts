@@ -1,8 +1,9 @@
 import * as http from 'http';
 import { getIdFromUrl } from '../utils/getIdFromUrl';
 import { userModel } from '../models/userModel';
-import { writeNotFound, writeServerError, writeCreated, writeSuccess } from '../utils/writeResponse';
+import { writeNotFound, writeServerError, writeCreated, writeSuccess, writeDeleted, writeInvalidUUID } from '../utils/writeResponse';
 import { getBody } from '../utils/getBody';
+import { checkIfValidUUID } from '../utils/checkIfValidUUID'
 
 const controller = {
   getUsers: (req: http.IncomingMessage, res: http.ServerResponse) => {
@@ -29,6 +30,11 @@ const controller = {
     const { url } = req;
     const userId = getIdFromUrl(url);
     if (userId) {
+      const isValidId = checkIfValidUUID(userId);
+      if (!isValidId) {
+        writeInvalidUUID(res);
+        return;
+      }
       const singleUser = userModel.getUserByUserId(userId);
       if (singleUser) {
         writeSuccess(res, singleUser);
@@ -45,9 +51,15 @@ const controller = {
     if (!userId) {
       writeNotFound(res, userId);
     } else {
+      const isValidId = checkIfValidUUID(userId);
+      if (!isValidId) {
+        writeInvalidUUID(res);
+        return;
+      }
       const user = userModel.getUserByUserId(userId);
       if (!user) {
         writeNotFound(res, userId);
+        return;
       }
       try {
         const body: any = await getBody(req);
@@ -68,7 +80,29 @@ const controller = {
     }
   }, 
   deleteUser: (req: http.IncomingMessage, res: http.ServerResponse) => {
-    console.log('deleting user')
+    const { url } = req;
+    const userId = getIdFromUrl(url);
+    if (!userId) {
+      writeNotFound(res, userId);
+      return;
+    } else {
+      const isValidId = checkIfValidUUID(userId);
+      if (!isValidId) {
+        writeInvalidUUID(res);
+        return;
+      }
+      try {
+        const deletingUser = userModel.getUserByUserId(userId);
+        if (!deletingUser) {
+          writeNotFound(res, userId);
+        } else {
+          const deletedUser = userModel.deleteUser(userId);
+          writeDeleted(res, deletedUser);
+        }
+      } catch(error) {
+        writeServerError(res, error);
+      }
+    }
   }
 }
 

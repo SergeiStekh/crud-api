@@ -1,7 +1,8 @@
 import http from 'http';
-import url from 'url';
 import { RouterType, Router } from '../router/router';
 import { RoutesInterface, routes } from '../router/routes';
+import { writeServerError } from '../utils/writeResponse';
+import { logServerIsRunning } from '../utils/logServerIsRunning'
 const PORT = process.env.PORT || 3000;
 
 class Server {
@@ -18,8 +19,7 @@ class Server {
       try {
         this.router.makeRequest(req, res);
       } catch (err) {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ 'message': '500 Internal Server Error' }));
+        writeServerError(res, err);
       }
     });
     this.server = server;
@@ -28,7 +28,7 @@ class Server {
 
   startServer() {
     this.server?.listen(PORT, () => {
-      console.log(`Server is running on port: ${PORT}`);
+      logServerIsRunning(PORT);
     });
   }
 }

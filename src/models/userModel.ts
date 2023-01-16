@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4';
+import { v4 as uuid } from 'uuid';
 import users from '../data/data.json';
 
 export type UserType = {
@@ -35,7 +35,7 @@ const userModel = {
   },
   deleteUser: (id: string) => {
     const userIndex = usersForUserModal.findIndex(user => user.id === id);
-    const deletedUser = usersForUserModal[userIndex];
+    const deletedUser = [...usersForUserModal][userIndex];
     usersForUserModal = usersForUserModal.filter(user => user.id !== id);
     return deletedUser;
   }

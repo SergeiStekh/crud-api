@@ -21,4 +21,14 @@ function writeSuccess(res: http.ServerResponse, data: UserType[] | UserType) {
   res.end(JSON.stringify(data));
 }
 
-export { writeNotFound, writeServerError, writeCreated, writeSuccess }
+function writeDeleted(res: http.ServerResponse, data: UserType) {
+  res.writeHead(204, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(data));
+}
+
+function writeInvalidUUID(res: http.ServerResponse) {
+  res.writeHead(400, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ message: 'User id has invalid formatting' }));
+}
+
+export { writeNotFound, writeServerError, writeCreated, writeSuccess, writeDeleted, writeInvalidUUID }
