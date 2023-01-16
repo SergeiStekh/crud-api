@@ -1,32 +1,16 @@
 import * as http from 'http';
 import { getIdFromUrl } from '../utils/getIdFromUrl';
 import { userModel } from '../models/userModel';
-
-async function getBody(req: http.IncomingMessage) {
-  return new Promise((resolve, reject) => {
-    let body: any[] | any = [];
-    req.on('error', (err) => {
-      console.error(err);
-      reject(err)
-    }).on('data', (chunk) => {
-    body.push(chunk);
-    }).on('end', () => {
-      body = Buffer.concat(body).toString();
-      resolve(body);
-    });
-  })
-}
+import { writeNotFound, writeServerError, writeCreated, writeSuccess } from '../utils/writeResponse';
+import { getBody } from '../utils/getBody';
 
 const controller = {
   getUsers: (req: http.IncomingMessage, res: http.ServerResponse) => {
     try {
       const users = userModel.getUsers();
-
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(users));
+      writeSuccess(res, users);
     } catch (error: any) {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: error.message }));
+      writeServerError(res, error);
     }
   },
   addUser: async (req: http.IncomingMessage, res: http.ServerResponse) => {
@@ -35,12 +19,10 @@ const controller = {
       const { username, age, hobbies } = JSON.parse(body);
       if (username && age && hobbies) {
         const user = await userModel.createUser({ id: '', username, age, hobbies });
-        res.writeHead(201, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(user));
+        writeCreated(res, user);
       }
     } catch(error) {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: '500 Internal Server Error' }));
+      writeServerError(res, error);
     }
   },
   getSingleUser: async (req: http.IncomingMessage, res: http.ServerResponse) => {
@@ -49,19 +31,41 @@ const controller = {
     if (userId) {
       const singleUser = userModel.getUserByUserId(userId);
       if (singleUser) {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(singleUser));
+        writeSuccess(res, singleUser);
       } else {
-        res.writeHead(404, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: `User with id ${userId} not found` }));
+        writeNotFound(res, userId);
       }
     } else {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: `User with id ${userId} not found` }));
+      writeNotFound(res, userId);
     }
   },
-  editUser: (req: http.IncomingMessage, res: http.ServerResponse) => {
-    console.log('editing user')
+  editUser: async (req: http.IncomingMessage, res: http.ServerResponse) => {
+    const { url } = req;
+    const userId = getIdFromUrl(url);
+    if (!userId) {
+      writeNotFound(res, userId);
+    } else {
+      const user = userModel.getUserByUserId(userId);
+      if (!user) {
+        writeNotFound(res, userId);
+      }
+      try {
+        const body: any = await getBody(req);
+        const updatedUserData = JSON.parse(body);
+        if (updatedUserData.username || updatedUserData.age || updatedUserData.hobbies) {
+          const updatedUserFields = {
+            id: '',
+            username: updatedUserData.username || user?.username,
+            age: updatedUserData.age || user?.age,
+            hobbies: updatedUserData.hobbies || user?.hobbies
+          };
+          const updatedUser = userModel.updateUser(userId, updatedUserFields);
+          writeSuccess(res, updatedUser);
+        }
+      } catch(error) {
+        writeServerError(res, error);
+      }
+    }
   }, 
   deleteUser: (req: http.IncomingMessage, res: http.ServerResponse) => {
     console.log('deleting user')

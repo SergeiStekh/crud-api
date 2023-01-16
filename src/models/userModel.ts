@@ -30,6 +30,7 @@ const userModel = {
     const userIndex = usersForUserModal.findIndex(user => user.id === id);
     const existingUser = usersForUserModal[userIndex];
     usersForUserModal[userIndex] = {...existingUser, ...userData};
+    usersForUserModal[userIndex].id = existingUser.id;
     return usersForUserModal[userIndex];
   },
   deleteUser: (id: string) => {
